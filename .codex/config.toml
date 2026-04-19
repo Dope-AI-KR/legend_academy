@@ -1,0 +1,108 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Project-scoped Codex configuration for this repository.
+# 이 저장소 전용 Codex 설정입니다.
+#
+# Keep this file repo-safe and generic.
+# 이 파일은 저장소 안전 범위와 일반 규칙만 담고,
+# machine-specific 또는 user-specific override는 `.codex.local.toml`에 둡니다.
+#
+# Typical uses / 일반적인 용도:
+# - repo-safe Codex defaults / 저장소 공용 Codex 기본값
+# - repo-safe MCP server definitions / 저장소 공용 MCP 서버 정의
+# - automatic harness request routing / 자동 하니스 요청 라우팅
+# - shared harness skill enablement / 공용 하니스 스킬 활성화
+# - bounded Codex history plus repo-local transient artifact retention / 제한된 Codex
+#   history와 저장소 로컬 임시 산출물 보존 정책
+#
+# Add settings only when they should apply to everyone working in this repo.
+# 이 저장소에서 일하는 모든 사람에게 적용되어야 할 때만 설정을 추가합니다.
+#
+# Launch with `bash scripts/codex/run_repo_codex.sh` so the shared cleanup path
+# stays active, and use `bash scripts/codex/clean_repo_artifacts.sh` when you
+# need to prune disposable artifacts explicitly.
+
+profile = "harness-default"
+personality = "pragmatic"
+project_root_markers = ["repo_harness.toml", "AGENTS.md"]
+web_search = "cached"
+log_dir = ".codex-home/log"
+sqlite_home = ".codex-home/sqlite"
+developer_instructions = '''
+[agentOS managed router]
+agentOS automatic request router
+
+Treat every normal repo request as a harness-managed request by default.
+
+Read in order:
+1. docs/HARNESS_CHECKLIST.md
+2. AGENTS.md
+3. repo_harness.toml
+4. docs/HARNESS_GUIDE.md
+5. .codex/config.toml
+6. .agents/skills/
+7. docs/MCP_CONTRACT.md when MCP exists
+8. the active execution plan for the task
+9. only then the smallest relevant source files
+
+Routing rules:
+- Use the shared repo skill `harness-executor` as the default intake path for non-trivial implementation, debugging, refactoring, review, or research work.
+- For complex, ambiguous, risky, or non-trivial work, use plan-first behavior and keep the active execution plan current.
+- Read the repo-local TDD contract in `repo_harness.toml [tdd]` and start enforceable behavior changes with the smallest failing check you can prove quickly.
+- Keep Codex as the default lane unless `repo_harness.toml [lane]` explicitly enables hybrid routing for a specific role.
+- Do not use Claude/BKit or any other external lane in a codex-only repo.
+- If `repo_harness.toml [lane]` enables hybrid mode, use external lanes only for the roles declared in `lane.role_routing`.
+- Prefer the shared harness skills in .agents/skills for repeatable methods.
+- Turn only stable recurring workflows into automations, after the manual loop is reliable.
+- Launch Codex through `scripts/codex/run_repo_codex.sh` when the repo-scoped launcher exists.
+- Treat screenshots, Playwright captures, delegated run outputs, and other transient artifacts as disposable unless they are retained through `retain-artifact:` lines in the active execution plan.
+- Before final handoff, run `scripts/codex/clean_repo_artifacts.sh` or otherwise remove disposable artifacts from `.playwright-cli/`, `output/bkit/`, and other harness-managed transient paths.
+- Before claiming complete, run validation, review the work, and record validation evidence, TDD evidence, and review evidence in the active execution plan.
+[/agentOS managed router]
+'''
+
+[history]
+persistence = "none"
+max_bytes = 10485760
+
+[profiles]
+
+[profiles.harness-default]
+model = "gpt-5.4"
+review_model = "gpt-5.4"
+model_reasoning_effort = "high"
+plan_mode_reasoning_effort = "xhigh"
+service_tier = "fast"
+
+[profiles.harness-research]
+model = "gpt-5.4"
+review_model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+web_search = "live"
+
+[skills]
+
+[[skills.config]]
+path = ".agents/skills/harness-executor"
+enabled = true
+
+[[skills.config]]
+path = ".agents/skills/harness-planner"
+enabled = true
+
+[[skills.config]]
+path = ".agents/skills/harness-reviewer"
+enabled = true
+
+[[skills.config]]
+path = ".agents/skills/harness-runtime-verifier"
+enabled = true
+
+[[skills.config]]
+path = ".agents/skills/harness-mcp-auditor"
+enabled = true
+
+[[skills.config]]
+path = ".agents/skills/harness-handoff"
+enabled = true

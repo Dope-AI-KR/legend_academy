@@ -1,0 +1,182 @@
+harness_version = "4.2.0"
+global_harness_root = "../../agentOS"
+global_harness_ref = "1ccef35cd9e175111c001ab8628c538404663d69"
+global_harness_manifest_sha256 = "79fa31f5db19b23e2fc229aed3888141f5b4375015f9c0c160c089d35b15f30d"
+global_harness_repo = "https://github.com/Dope-AI-KR/agentOS"
+repo_type = "frontend-app"
+production_sensitive = false
+has_mcp = false
+has_realtime = false
+has_deploy = true
+
+[lane]
+mode = "orchestrated"
+primary = "codex"
+enabled = ["codex"]
+role_routing = []
+
+[autonomy]
+policy = "run-until-resolved"
+stop_only_on = ["missing-secret", "missing-approval", "missing-external-service-access", "manual-physical-verification", "hard-tool-outage"]
+allow_infinite_local_iteration = true
+require_blocker_artifact_on_stop = true
+
+[orchestrator]
+enabled = true
+lease_seconds = 900
+heartbeat_seconds = 60
+max_stale_heartbeat_seconds = 180
+resume_policy = "required"
+wakeup_coalescing = true
+ownership_conflict_policy = "409-conflict"
+default_budget_policy = "task-class-derived"
+external_consultants_allowed = ["claude", "gemini"]
+task_claim_path = "docs/exec-plans/active/task-claim.json"
+heartbeat_log_path = "docs/exec-plans/active/heartbeat.jsonl"
+blocker_path = "docs/exec-plans/active/blocker.json"
+resume_state_path = "docs/exec-plans/active/resume-state.json"
+
+[parallelism]
+strategy = "maximum-safe-parallel"
+worker_cap_policy = "auto"
+primary_acceptance = "primary-only"
+require_isolated_sidecars = true
+duplicate_work_policy = "coalesce-readonly-only"
+shared_fixture_policy = "forbid-unless-namespaced"
+external_consultants_allowed = ["claude", "gemini"]
+
+[browser_automation]
+mode = "containerized"
+runtime = "docker"
+framework = "playwright"
+host_browser_fallback = "forbidden"
+override_policy = "explicit-artifact-only"
+wrapper_path = "scripts/harness/run_browser_automation.sh"
+artifact_dir = ".playwright-cli"
+override_artifact = "docs/exec-plans/active/browser-automation-override.json"
+max_parallel_containers = 2
+
+[consultation]
+policy = "best-effort"
+preferred_reviewers = ["claude", "gemini"]
+attempt_on = ["global-harness-change", "breaking-contract-change", "routing-policy-change", "release-law-change", "browser-automation-law-change"]
+artifact_required = true
+consensus_mode = false
+artifacts_dir = "docs/exec-plans/active/consultation-attempts"
+
+[rollout]
+mode = "maximum-safe-parallel"
+candidate_tree_policy = "exact-tree"
+certification_root_policy = "fresh-full-root"
+production_mutation_policy = "final-deploy-only"
+beta_mutation_policy = "disposable-isolated"
+shadow_check_policy = "readonly-only"
+artifacts_dir = "docs/exec-plans/active/release-certification"
+
+[runtime]
+backend = "native"
+omx_package = "oh-my-codex"
+omx_version = "0.11.13"
+omx_setup_scope = "user"
+omx_home = ".omx-home"
+omx_launch_flags = ["--madmax", "--high"]
+
+[paths]
+exec_plans = "docs/exec-plans"
+progress_ledger_html = "docs/exec-plans/active/HARNESS_PROGRESS_LEDGER.html"
+mcp_contract = "docs/MCP_CONTRACT.md"
+agents_file = "AGENTS.md"
+harness_guide = "docs/HARNESS_GUIDE.md"
+codex_config = ".codex/config.toml"
+skills_root = ".agents/skills"
+state_ledger_json = "docs/exec-plans/active/state-ledger.json"
+working_context_md = "docs/exec-plans/active/WORKING_CONTEXT.md"
+session_start_md = "docs/exec-plans/active/SESSION_START.md"
+
+[validation]
+frontend_build = "cd pitching && ./node_modules/.bin/next build"
+frontend_build_proves = "The Next.js presentation compiles into a production build with the repo-local dependencies."
+backend_boot = ""
+backend_boot_proves = ""
+runtime_smoke = "bash scripts/harness/runtime_smoke.sh"
+runtime_smoke_proves = "A production-built Next server can boot locally on 127.0.0.1:3100 and serve the Legend Academy landing deck."
+health_url = ""
+health_url_proves = ""
+
+[[validation.targeted_checks]]
+name = "typescript"
+command = "cd pitching && ./node_modules/.bin/tsc --noEmit"
+proves = "The presentation app remains type-safe under the repo-local TypeScript compiler."
+
+[tdd]
+required = true
+mode = "contract-first"
+test_command = "cd pitching && ./node_modules/.bin/tsc --noEmit"
+test_command_proves = "The presentation app stays type-safe under the repo-local TypeScript compiler."
+red_signal_regex = "TS2322|Type 'number' is not assignable to type 'string'"
+red_signal_proves = "The declared fast loop catches a concrete TypeScript contract break before build or runtime validation."
+fixture_strategy = "For UI and harness contract work, introduce the smallest temporary TypeScript seam under pitching/ to record a red artifact, then remove it before the green run."
+refactor_guard = "Re-run the declared TypeScript loop, the production build, and the runtime smoke after refactors that touch slide composition, presentation engine wiring, or shared layout primitives."
+
+[mcp]
+guide_url = ""
+surfaces = []
+
+[architecture]
+single_source_of_truth = true
+projection_surfaces = ["pitching/.next", "docs/exec-plans/active/HARNESS_PROGRESS_LEDGER.html"]
+
+[delegation]
+snapshot_excludes = [".git/", ".env", ".env.*", ".aws/", ".ssh/", "*.pem", "*.key", "id_rsa", "id_ed25519", ".codex-home/", ".gemini-home/", ".bkit/", ".playwright-cli/", "output/", "node_modules/", ".venv/", "venv/", "dist/", "build/", "coverage/", ".pytest_cache/", ".mypy_cache/", ".next/", ".nuxt/", ".turbo/", "target/", ".gradle/", "tmp/", "temp/"]
+
+[frontier]
+enabled = true
+orchestrator_lane = "codex"
+task_taxonomy = "../../agentOS/config/task_taxonomy.json"
+capability_registry = "../../agentOS/config/lane_capability_registry.json"
+routing_policy = "../../agentOS/config/routing_policy.json"
+routing_decisions_dir = "docs/exec-plans/active/routing-decisions"
+worker_reports_dir = "docs/exec-plans/active/worker-reports"
+capability_scorecards_dir = "docs/exec-plans/scorecards"
+routing_policy_proposals_dir = "docs/exec-plans/scorecard-proposals"
+team_ledger_html = "docs/exec-plans/active/TEAM_PROGRESS_LEDGER.html"
+improvement_mode = "live-orchestrated"
+
+[ci]
+harness_validation_mode = "local-only"
+visible_workflows = []
+
+[install]
+profile = "frontier"
+enabled_features = ["core", "consultation", "browser-containerized", "frontier", "secondary-lanes"]
+
+[capability_control]
+enabled = true
+default_policy = "ask"
+decision_artifact = "docs/exec-plans/active/capability-decisions.json"
+override_artifact = "docs/exec-plans/active/capability-overrides.json"
+browser_origin_allowlist = ["http://localhost:*", "https://localhost:*", "http://127.0.0.1:*"]
+
+[[capability_control.policies]]
+capability_id = "repo-write"
+policy = "allow"
+
+[[capability_control.policies]]
+capability_id = "git-mutation"
+policy = "ask"
+
+[[capability_control.policies]]
+capability_id = "browser-external"
+policy = "ask"
+
+[[capability_control.policies]]
+capability_id = "mcp-write"
+policy = "ask"
+
+[[capability_control.policies]]
+capability_id = "deploy-mutation"
+policy = "deny"
+
+[[capability_control.policies]]
+capability_id = "secret-materialization"
+policy = "deny"

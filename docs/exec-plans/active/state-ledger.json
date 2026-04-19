@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "task_id": "2026-04-17-agentos-4.0.0-sync",
+  "plan_ref": "docs/exec-plans/active/2026-04-17-agentos-4.0.0-sync.md",
+  "owner_lane": "codex",
+  "status": "complete",
+  "latest_routing_decision_ref": "docs/exec-plans/active/routing-decisions/2026-04-17-agentos-4.0.0-sync.routing.json",
+  "open_blocker_ref": "",
+  "proof_queue": [],
+  "consultation_status": {
+    "state": "`command_exit=0`",
+    "latest_artifact": "docs/exec-plans/active/consultation-attempts/2026-04-17-agentos-4.0.0-gemini-review.md",
+    "summary": ""
+  },
+  "resume_cursor": {
+    "status": "complete",
+    "latest_heartbeat_at": "2026-04-17T04:32:37Z",
+    "continuation_hint": "Resume from the active execution plan and continue until all declared gates are green or a valid blocker exists."
+  },
+  "last_updated_at": "2026-04-19T23:38:31Z"
+}

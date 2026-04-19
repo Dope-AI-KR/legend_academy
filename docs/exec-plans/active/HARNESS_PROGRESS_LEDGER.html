@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="hos-ledger-template-version" content="2">
+  <meta name="hos-ledger-fingerprint" content="dfcc3b96616b7a6cafe9dc22b08812915a383eac3c74f9f30902ebd6d6be54e7">
+  <title>HOS Progress Ledger</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --planned: #64748b;
+      --executing: #0ea5e9;
+      --validating: #f59e0b;
+      --complete: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 ui-sans-serif, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    main { max-width: 1200px; margin: 0 auto; padding: 32px 20px 48px; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .meta { color: var(--muted); margin-bottom: 24px; }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .summary-card, .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+    .summary-card strong { display: block; font-size: 24px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .card header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card h2 { margin: 0; font-size: 18px; }
+    .target { color: var(--muted); min-height: 42px; }
+    .badge { border-radius: 999px; padding: 4px 10px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .stage-planned { background: rgba(100,116,139,.18); color: #cbd5e1; }
+    .stage-executing { background: rgba(14,165,233,.18); color: #bae6fd; }
+    .stage-validating { background: rgba(245,158,11,.18); color: #fde68a; }
+    .stage-complete { background: rgba(34,197,94,.18); color: #bbf7d0; }
+    .meter { height: 10px; border-radius: 999px; background: var(--panel-2); overflow: hidden; margin: 12px 0 16px; }
+    .meter span { display: block; height: 100%; background: linear-gradient(90deg, var(--executing), var(--complete)); }
+    dl { display: grid; gap: 8px; margin: 0; }
+    dt { color: var(--muted); font-weight: 600; }
+    dd { margin: 0; }
+    .empty { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>HOS Progress Ledger</h1>
+    <p class="meta">Generated at 2026-04-19T23:38:31Z from the active execution plans. This ledger is an operator-visible projection of current plan state, validation evidence, TDD evidence, and review evidence. It is not a cryptographically signed audit record and does not replace the underlying execution plans.</p>
+    <section class="summary">
+      <div class="summary-card"><span>Active plans</span><strong>1</strong></div>
+      <div class="summary-card"><span>Completed plans</span><strong>0</strong></div>
+      <div class="summary-card"><span>In flight</span><strong>1</strong></div>
+    </section>
+    <section class="cards">
+
+      <article class="card">
+        <header>
+          <h2>2026-04-17-agentos-4.0.0-sync.md</h2>
+          <span class="badge stage-validating">validating</span>
+        </header>
+        <p class="target">Resync this downstream repository from AgentOS `3.0.1` to AgentOS `4.0.0` at upstream commit `402dd9324a11861ac1e364ae6372ecc86f1fb073`, adopt the 4.0.0 repo-harness contract as...</p>
+        <div class="meter"><span style="width:85%"></span></div>
+        <dl>
+          <div><dt>Layer</dt><dd>Repo adapter and execution-governance layer: `repo_harness.toml`, harness-managed wrappers/manifests/docs, active execution artifacts, and the minimal local proof surfaces aroun...</dd></div>
+          <div><dt>State</dt><dd>complete with local verification green</dd></div>
+          <div><dt>Ready</dt><dd>yes, exact-tree release evidence prepared</dd></div>
+          <div><dt>Write set</dt><dd>`HARNESS_VERSION` `repo_harness.toml` `AGENTS.md` `docs/HARNESS_CHECKLIST.md` `docs/HARNESS_GUIDE.md` `docs/MCP_CONTRACT.md` `.codex/config.toml` `.agents/.agentOS-skill-manifes...</dd></div>
+          <div><dt>Validation</dt><dd>commands run / 실행한 명령: `AGENT_OS_ALLOW_DIRTY_HARNESS=1 bash ../agentOS/scripts/harness/update.sh --repo &quot;$(pwd)&quot;`; `python3 ../agentOS/scripts/harness/verify_harness.py --repo &quot;...</dd></div>
+          <div><dt>TDD</dt><dd>red signal / red 신호: temporary seam `pitching/tmp-agentos-4-red.ts` triggered the declared `TS2322` contract failure and was removed immediately after the red capture. red artif...</dd></div>
+          <div><dt>Review</dt><dd>reviewer / 리뷰어: codex self-review plus best-effort external consultation from Gemini and Claude review artifact / 리뷰 산출물: `docs/exec-plans/active/consultation-attempts/2026-04-1...</dd></div>
+        </dl>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "harness-executor": "d70e557d24335ef433b23969bc8d71c1d6a7759b712d93bb9a44860133652e69",
+  "harness-handoff": "dfdadafd0bb37cdc0ba966c8fe25cf892a23f961a7d4dbccb12cf5b5fbb0c04a",
+  "harness-mcp-auditor": "c9f6a5d783f09418d1c0d3d24fa878776c3e7a723e0edc19545fa429591a1c9c",
+  "harness-planner": "18c49e6fb8007e904ae784b2b6c78b94328319f695c81fc6dc2837379bec8c43",
+  "harness-reviewer": "5cf7fdc6c866b71940011e04835f02970736cd73b5736f81d907c75785cdca80",
+  "harness-runtime-verifier": "21cfa946eff43b7e581cffff290db1092a41a0859a206c4baf43e36849fb1a56"
+}
